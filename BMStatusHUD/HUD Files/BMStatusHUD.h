@@ -14,7 +14,8 @@ NS_ENUM(NSUInteger , BMStatusHUDActivityIndicatorType) {
 
 NS_ENUM(NSUInteger , BMStatusHUDAnimation) {
     BMStatusHUDAnimationNone = 0,
-    BMStatusHUDAnimationSlideInFromTop, //Default
+    BMStatusHUDAnimationFadeIn, //Default
+    BMStatusHUDAnimationSlideInFromTop,
     BMStatusHudAnimationSlideInFromBottom,
     BMStatusHudAnimationSlideInFromRight,
     BMStatusHudAnimationSlideInFromLeft
@@ -25,11 +26,11 @@ NS_ENUM(NSUInteger , BMStatusHUDAnimation) {
 
 @property (nonatomic, strong, setter=setTitle:) NSString *title;
 @property (nonatomic, strong, setter=setDetail:) NSString *detail;
-@property (nonatomic, assign) enum BMStatusHUDActivityIndicatorType activityIndicatorType;
+@property (nonatomic, assign, setter=setActivityIndicatorType:) enum BMStatusHUDActivityIndicatorType activityIndicatorType;
 @property (nonatomic, assign) enum BMStatusHUDAnimation animationType;
-@property (nonatomic, strong) UIColor *blockerColor;
-@property (nonatomic, strong) UIColor *hudBackgroundColor;
-@property (nonatomic, strong) UIColor *textColor;
+@property (nonatomic, strong, setter=setBlockerColor:) UIColor *blockerColor;
+@property (nonatomic, strong, setter=setHudBackgroundColor:) UIColor *hudBackgroundColor;
+@property (nonatomic, strong, setter=setTextColor:) UIColor *textColor;
 
 - (instancetype)init;
 - (instancetype)initWithTitle:(NSString *)title;

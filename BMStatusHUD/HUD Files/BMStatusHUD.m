@@ -7,6 +7,8 @@
 
 #define LAYOUTFRAMES 0
 
+static const CGFloat AnimationDuration = 0.25f;
+
 @interface BMStatusHUD ()
 
 @property (nonatomic, strong) UIView *backgroundView;
@@ -30,6 +32,7 @@
 }
 
 
+#pragma mark - Initializers
 - (instancetype)init {
     return [self initWithTitle:nil andDetail:nil];
 }
@@ -62,7 +65,7 @@
         self.title = title;
         self.detail = detail;
         self.activityIndicatorType = spinnerType;
-        self.animationType = BMStatusHUDAnimationSlideInFromTop;
+        self.animationType = BMStatusHUDAnimationFadeIn;
         self.blockerColor = [UIColor colorWithRed:0.0f green:0.0f blue:0.0f alpha:0.4f];
         self.hudBackgroundColor = [UIColor colorWithRed:1.0f green:1.0f blue:1.0f alpha:0.7f];
         self.textColor = [UIColor blackColor];
@@ -107,7 +110,7 @@
 
 
 
-#pragma mark -
+#pragma mark - Public Methods
 - (void)show {
     [self createViewsIfNeeded];
 
@@ -136,11 +139,17 @@
             startCenter.x += self.backgroundView.frame.size.width;
             break;
         }
+        case BMStatusHUDAnimationFadeIn:{
+            animateIn = YES;
+            startCenter = endCenter;
+            break;
+        }
         case BMStatusHUDAnimationNone:
-        default:
+        default: {
             animateIn = NO;
             startCenter = endCenter;
             break;
+        }
     }
 
     self.hudView.center = startCenter;
@@ -153,17 +162,21 @@
     }
 
     if (animateIn) {
-        [UIView animateWithDuration:0.25f
+        self.backgroundView.alpha = 0.0f;
+
+        [UIView animateWithDuration:AnimationDuration
                               delay:0.0f
                             options:UIViewAnimationOptionCurveEaseOut
                          animations:^{
-            self.hudView.center = endCenter;
-        }
+                             self.backgroundView.alpha = 1.0f;
+                             self.hudView.center = endCenter;
+                         }
                          completion:^(BOOL finished){
-            if (!finished) {
-                self.hudView.center = endCenter;
-            }
-        }];
+                             if (!finished) {
+                                 self.backgroundView.alpha = 1.0f;
+                                 self.hudView.center = endCenter;
+                             }
+                         }];
     }
 
 }
@@ -191,6 +204,10 @@
             endCenter.x = (self.backgroundView.frame.size.width + endCenter.x);
             break;
         }
+        case BMStatusHUDAnimationFadeIn: {
+            animateOut = YES;
+            break;
+        }
         case BMStatusHUDAnimationNone:
         default:
             animateOut = NO;
@@ -198,16 +215,20 @@
     }
 
     if (animateOut) {
-        [UIView animateKeyframesWithDuration:0.25f
+        [UIView animateKeyframesWithDuration:AnimationDuration
                                        delay:0.0f
                                      options:UIViewAnimationOptionCurveEaseIn
                                   animations:^{
-            self.hudView.center = endCenter;
-
-        }
+                                      self.hudView.center = endCenter;
+                                      self.backgroundView.alpha = 0.0f;
+                                  }
                                   completion:^(BOOL finished){
-            [self.backgroundView removeFromSuperview];
-        }];
+                                      if (!finished) {
+                                          self.hudView.center = endCenter;
+                                          self.backgroundView.alpha = 0.0f;
+                                      }
+                                      [self.backgroundView removeFromSuperview];
+                                  }];
 
     } else {
         [self.backgroundView removeFromSuperview];
@@ -337,7 +358,6 @@
 
     CGFloat titleLabelHeight = labelFont.lineHeight;
 
-
     CGRect labelRect = [self.title boundingRectWithSize:CGSizeMake(maxLabelWidth, ceilf(titleLabelHeight))
                                                  options:(NSStringDrawingTruncatesLastVisibleLine)
                                               attributes:@{
@@ -350,6 +370,7 @@
     titleLabel.text = self.title;
     titleLabel.textAlignment = NSTextAlignmentCenter;
     titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+    titleLabel.textColor = self.textColor;
 
     return titleLabel;
 }
@@ -378,6 +399,7 @@
     detailLabel.text = self.detail;
     detailLabel.numberOfLines = maxNumberOfLines;
     detailLabel.textAlignment = NSTextAlignmentCenter;
+    detailLabel.textColor = self.textColor;
 
     return detailLabel;
 }
@@ -412,5 +434,54 @@
     }
 }
 
+
+
+- (void)setActivityIndicatorType:(enum BMStatusHUDActivityIndicatorType)type {
+    _activityIndicatorType = type;
+
+    if (self.activityIndicatorView != nil) {
+        if (type == BMStatusHUDActivityIndicatorTypeDark) {
+            self.activityIndicatorView.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
+
+        } else {
+            self.activityIndicatorView.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhite;
+        }
+    }
+}
+
+
+
+- (void)setBlockerColor:(UIColor *)blockerColor {
+    _blockerColor = blockerColor;
+
+    if (self.backgroundView != nil) {
+        self.backgroundView.backgroundColor = blockerColor;
+    }
+
+}
+
+
+
+- (void)setHudBackgroundColor:(UIColor *)hudBackgroundColor {
+    _hudBackgroundColor = hudBackgroundColor;
+
+    if (self.hudView != nil) {
+        self.hudView.backgroundColor = hudBackgroundColor;
+    }
+}
+
+
+
+- (void)setTextColor:(UIColor *)textColor {
+    _textColor = textColor;
+
+    if (self.title != nil) {
+        self.titleLabel.textColor = textColor;
+    }
+
+    if (self.detailLabel != nil) {
+        self.detailLabel.textColor = textColor;
+    }
+}
 
 @end

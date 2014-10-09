@@ -14,6 +14,7 @@
 @property (nonatomic, weak) IBOutlet UITextField *detailEntryTextField;
 @property (nonatomic, weak) IBOutlet UISwitch *activityIndicatorSwitch;
 @property (nonatomic, weak) IBOutlet UIButton *noneAnimationButton;
+@property (nonatomic, weak) IBOutlet UIButton *fadeInAnimationButton;
 @property (nonatomic, weak) IBOutlet UIButton *slideInFromTopAnimationButton;
 @property (nonatomic, weak) IBOutlet UIButton *slideInFromBottomAnimationButton;
 @property (nonatomic, weak) IBOutlet UIButton *slideInFromLeftAnimationButton;

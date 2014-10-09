@@ -45,16 +45,19 @@
 
     } else if (sender == self.slideInFromRightAnimationButton) {
         self.hud.animationType = BMStatusHudAnimationSlideInFromRight;
+
+    } else if (sender == self.fadeInAnimationButton) {
+        self.hud.animationType = BMStatusHUDAnimationFadeIn;
     }
 
     [self.hud show];
 
 
-    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:5.0f
-                                                      target:self
-                                                    selector:@selector(hideHUD)
-                                                    userInfo:nil
-                                                     repeats:NO];
+    __weak NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:5.0f
+                                                             target:self
+                                                           selector:@selector(hideHUD)
+                                                           userInfo:nil
+                                                            repeats:NO];
 
 }
 
