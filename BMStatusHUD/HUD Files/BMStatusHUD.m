@@ -215,20 +215,20 @@ static const CGFloat AnimationDuration = 0.25f;
     }
 
     if (animateOut) {
-        [UIView animateKeyframesWithDuration:AnimationDuration
-                                       delay:0.0f
-                                     options:UIViewAnimationOptionCurveEaseIn
-                                  animations:^{
-                                      self.hudView.center = endCenter;
-                                      self.backgroundView.alpha = 0.0f;
-                                  }
-                                  completion:^(BOOL finished){
-                                      if (!finished) {
-                                          self.hudView.center = endCenter;
-                                          self.backgroundView.alpha = 0.0f;
-                                      }
-                                      [self.backgroundView removeFromSuperview];
-                                  }];
+        [UIView animateWithDuration:AnimationDuration
+                              delay:0.0f
+                            options:UIViewAnimationOptionCurveEaseIn
+                         animations:^{
+                             self.hudView.center = endCenter;
+                             self.backgroundView.alpha = 0.0f;
+                         }
+                         completion:^(BOOL finished) {
+                             if (!finished) {
+                                 self.hudView.center = endCenter;
+                                 self.backgroundView.alpha = 0.0f;
+                             }
+                             [self.backgroundView removeFromSuperview];
+                         }];
 
     } else {
         [self.backgroundView removeFromSuperview];
