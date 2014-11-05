@@ -6,13 +6,13 @@
 #import <Foundation/Foundation.h>
 
 
-NS_ENUM(NSUInteger , BMStatusHUDActivityIndicatorType) {
+typedef NS_ENUM(NSUInteger , BMStatusHUDActivityIndicatorType) {
     BMStatusHUDActivityIndicatorTypeNone = 0,
     BMStatusHUDActivityIndicatorTypeDark,
     BMStatusHUDActivityIndicatorTypeLight
 };
 
-NS_ENUM(NSUInteger , BMStatusHUDAnimation) {
+typedef NS_ENUM(NSUInteger , BMStatusHUDAnimation) {
     BMStatusHUDAnimationNone = 0,
     BMStatusHUDAnimationFadeIn, //Default
     BMStatusHUDAnimationSlideInFromTop,
@@ -36,7 +36,7 @@ NS_ENUM(NSUInteger , BMStatusHUDAnimation) {
 - (instancetype)initWithTitle:(NSString *)title;
 - (instancetype)initWithDetail:(NSString *)details;
 - (instancetype)initWithTitle:(NSString *)title andDetail:(NSString *)detail;
-- (instancetype)initWithTitle:(NSString *)title andDetail:(NSString *)detail withSpinnerType:(enum BMStatusHUDActivityIndicatorType)spinnerType;
+- (instancetype)initWithTitle:(NSString *)title andDetail:(NSString *)detail withSpinnerType:(enum BMStatusHUDActivityIndicatorType)spinnerType NS_DESIGNATED_INITIALIZER;
 + (instancetype)HUD;
 + (instancetype)HUDWithTitle:(NSString *)title;
 + (instancetype)HUDWithDetails:(NSString *)details;
