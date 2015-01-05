@@ -43,6 +43,7 @@ typedef NS_ENUM(NSUInteger , BMStatusHUDAnimation) {
 + (instancetype)HUDWithTitle:(NSString *)title andDetail:(NSString *)detail withSpinnerType:(enum BMStatusHUDActivityIndicatorType)spinnerType;
 
 - (void)show;
+- (void)showAtWindowLevel:(UIWindowLevel) windowLevel; // Default: UIWindowLevelNormal
 - (void)dismiss;
 
 @end

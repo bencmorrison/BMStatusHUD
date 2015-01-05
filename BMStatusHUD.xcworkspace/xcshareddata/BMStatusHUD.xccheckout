@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>3B93C654-CC10-43AE-A01A-282778CC22C0</string>
+	<key>IDESourceControlProjectName</key>
+	<string>BMStatusHUD</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>D2A17282B947C87D9380F908EDE10BFD809C00DE</key>
+		<string>https://github.com/bencmorrison/BMStatusHUD.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>BMStatusHUD.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>D2A17282B947C87D9380F908EDE10BFD809C00DE</key>
+		<string>..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/bencmorrison/BMStatusHUD.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>D2A17282B947C87D9380F908EDE10BFD809C00DE</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>D2A17282B947C87D9380F908EDE10BFD809C00DE</string>
+			<key>IDESourceControlWCCName</key>
+			<string>BMStatusHUD</string>
+		</dict>
+	</array>
+</dict>
+</plist>

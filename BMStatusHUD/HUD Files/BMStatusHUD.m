@@ -16,6 +16,7 @@ static const CGFloat AnimationDuration = 0.25f;
 @property (nonatomic, strong) UIActivityIndicatorView *activityIndicatorView;
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UILabel *detailLabel;
+@property (nonatomic, strong) UIWindow *statusWindow;
 
 
 - (UIActivityIndicatorView *)createActivityIndicatorViewIfNeeded;
@@ -112,6 +113,17 @@ static const CGFloat AnimationDuration = 0.25f;
 
 #pragma mark - Public Methods
 - (void)show {
+    [self showAtWindowLevel:UIWindowLevelNormal];
+}
+
+
+
+- (void)showAtWindowLevel:(UIWindowLevel) windowLevel {
+    if (self.statusWindow != nil) {
+        // Already Showing Status HUD
+        return;
+    }
+
     [self createViewsIfNeeded];
 
     BOOL animateIn = YES;
@@ -154,8 +166,12 @@ static const CGFloat AnimationDuration = 0.25f;
 
     self.hudView.center = startCenter;
 
-    id AppDelegate = [[UIApplication sharedApplication] delegate];
-    [[AppDelegate window] addSubview:self.backgroundView];
+
+    self.statusWindow = [[UIWindow alloc] initWithFrame:[UIApplication sharedApplication].keyWindow.bounds];
+    self.statusWindow.windowLevel = windowLevel;
+
+    [self.statusWindow addSubview:self.backgroundView];
+    [self.statusWindow makeKeyAndVisible];
 
     if (self.activityIndicatorView != nil) {
         [self.activityIndicatorView startAnimating];
@@ -178,12 +194,16 @@ static const CGFloat AnimationDuration = 0.25f;
                              }
                          }];
     }
-
 }
 
 
 
 - (void)dismiss {
+    if (self.statusWindow == nil) {
+        // Totally not showing the Status HUD
+        return;
+    }
+
     BOOL animateOut = YES;
     CGPoint endCenter = self.hudView.center;
 
@@ -228,13 +248,16 @@ static const CGFloat AnimationDuration = 0.25f;
                                  self.backgroundView.alpha = 0.0f;
                              }
                              [self.backgroundView removeFromSuperview];
+
+                             [self.statusWindow resignKeyWindow];
+                             self.statusWindow = nil;
                          }];
 
     } else {
         [self.backgroundView removeFromSuperview];
+        [self.statusWindow resignKeyWindow];
+        self.statusWindow = nil;
     }
-
-
 }
 
 
