@@ -167,33 +167,35 @@ static const CGFloat AnimationDuration = 0.25f;
     self.hudView.center = startCenter;
 
 
-    self.statusWindow = [[UIWindow alloc] initWithFrame:[UIApplication sharedApplication].keyWindow.bounds];
-    self.statusWindow.windowLevel = windowLevel;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.statusWindow = [[UIWindow alloc] initWithFrame:[UIApplication sharedApplication].keyWindow.bounds];
+        self.statusWindow.windowLevel = windowLevel;
 
-    [self.statusWindow addSubview:self.backgroundView];
-    [self.statusWindow makeKeyAndVisible];
+        [self.statusWindow addSubview:self.backgroundView];
+        [self.statusWindow makeKeyAndVisible];
 
-    if (self.activityIndicatorView != nil) {
-        [self.activityIndicatorView startAnimating];
-    }
+        if (self.activityIndicatorView != nil) {
+            [self.activityIndicatorView startAnimating];
+        }
 
-    if (animateIn) {
-        self.backgroundView.alpha = 0.0f;
+        if (animateIn) {
+            self.backgroundView.alpha = 0.0f;
 
-        [UIView animateWithDuration:AnimationDuration
-                              delay:0.0f
-                            options:UIViewAnimationOptionCurveEaseOut
-                         animations:^{
-                             self.backgroundView.alpha = 1.0f;
-                             self.hudView.center = endCenter;
-                         }
-                         completion:^(BOOL finished){
-                             if (!finished) {
+            [UIView animateWithDuration:AnimationDuration
+                                  delay:0.0f
+                                options:UIViewAnimationOptionCurveEaseOut
+                             animations:^{
                                  self.backgroundView.alpha = 1.0f;
                                  self.hudView.center = endCenter;
                              }
-                         }];
-    }
+                             completion:^(BOOL finished){
+                                 if (!finished) {
+                                     self.backgroundView.alpha = 1.0f;
+                                     self.hudView.center = endCenter;
+                                 }
+                             }];
+        }
+    });
 }
 
 
@@ -234,30 +236,32 @@ static const CGFloat AnimationDuration = 0.25f;
             break;
     }
 
-    if (animateOut) {
-        [UIView animateWithDuration:AnimationDuration
-                              delay:0.0f
-                            options:UIViewAnimationOptionCurveEaseIn
-                         animations:^{
-                             self.hudView.center = endCenter;
-                             self.backgroundView.alpha = 0.0f;
-                         }
-                         completion:^(BOOL finished) {
-                             if (!finished) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (animateOut) {
+            [UIView animateWithDuration:AnimationDuration
+                                  delay:0.0f
+                                options:UIViewAnimationOptionCurveEaseIn
+                             animations:^{
                                  self.hudView.center = endCenter;
                                  self.backgroundView.alpha = 0.0f;
                              }
-                             [self.backgroundView removeFromSuperview];
+                             completion:^(BOOL finished) {
+                                 if (!finished) {
+                                     self.hudView.center = endCenter;
+                                     self.backgroundView.alpha = 0.0f;
+                                 }
+                                 [self.backgroundView removeFromSuperview];
 
-                             [self.statusWindow resignKeyWindow];
-                             self.statusWindow = nil;
-                         }];
+                                 [self.statusWindow resignKeyWindow];
+                                 self.statusWindow = nil;
+                             }];
 
-    } else {
-        [self.backgroundView removeFromSuperview];
-        [self.statusWindow resignKeyWindow];
-        self.statusWindow = nil;
-    }
+        } else {
+            [self.backgroundView removeFromSuperview];
+            [self.statusWindow resignKeyWindow];
+            self.statusWindow = nil;
+        }
+    });
 }
 
 
