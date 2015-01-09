@@ -20,8 +20,8 @@ static const CGFloat AnimationDuration = 0.25f;
 
 
 - (UIActivityIndicatorView *)createActivityIndicatorViewIfNeeded;
-- (UILabel *)createTitleLabelAsNeeded;
-- (UILabel *)createDetailLabelAsNeeded;
+- (UILabel *)createTitleLabelWithMaxWidth:(CGFloat)maxLabelWidth labelOrigin:(CGPoint)labelOrigin;
+- (UILabel *)createDetailLabelWithMaxWidth:(CGFloat)maxLabelWidth labelOrigin:(CGPoint)labelOrigin;
 
 @end
 
@@ -280,8 +280,7 @@ static const CGFloat AnimationDuration = 0.25f;
     self.hudView.layer.cornerRadius = 10.0f;
 
     self.activityIndicatorView = [self createActivityIndicatorViewIfNeeded];
-    self.titleLabel = [self createTitleLabelAsNeeded];
-    self.detailLabel = [self createDetailLabelAsNeeded];
+
 
     CGFloat heightOfAllItems = 20.0f;
 
@@ -293,43 +292,52 @@ static const CGFloat AnimationDuration = 0.25f;
         [self.hudView addSubview:self.activityIndicatorView];
     }
 
-    if (self.titleLabel != nil) {
-        CGRect titleLabelFrame = self.titleLabel.frame;
 
-        if (self.activityIndicatorView == nil) {
-            titleLabelFrame.origin = CGPointMake(ViewInset, ViewInset);
-            titleLabelFrame.size.width = MaxWidth - (ViewInset * 2.0f);
-            self.titleLabel.textAlignment = NSTextAlignmentCenter;
+    if (self.title != nil) {
+        CGPoint frameOrigin = CGPointMake(ViewInset, ViewInset);
+        CGFloat maxWidth = MaxWidth - (ViewInset * 2.0f);
 
-        } else {
-            titleLabelFrame.origin = CGPointMake(((ViewInset * 2.0f) + self.activityIndicatorView.frame.size.width), ViewInset);
-
-            if (titleLabelFrame.size.width > (MaxWidth - (ViewInset * 2.0f) - ((ViewInset * 2.0f) + self.activityIndicatorView.frame.size.width))) {
-                CGFloat titleLabelFrameWidth = MaxWidth - titleLabelFrame.origin.x - ViewInset - ViewInset;
-                titleLabelFrame.size.width = titleLabelFrameWidth;
-            }
+        if (self.activityIndicatorView != nil)  {
+            frameOrigin = CGPointMake(((ViewInset * 2.0f) + self.activityIndicatorView.frame.size.width), ViewInset);
+            maxWidth = MaxWidth - frameOrigin.x - ViewInset - ViewInset;
 
         }
 
-        self.titleLabel.frame = titleLabelFrame;
+        self.titleLabel = [self createTitleLabelWithMaxWidth:maxWidth labelOrigin:frameOrigin];
 
-        heightOfAllItems = titleLabelFrame.origin.y + titleLabelFrame.size.height;
+        heightOfAllItems = self.titleLabel.frame.origin.y + self.titleLabel.frame.size.height;
+
+        if (self.activityIndicatorView == nil) {
+            self.titleLabel.center = CGPointMake(self.hudView.center.x, self.titleLabel.center.y);
+        }
 
         [self.hudView addSubview:self.titleLabel];
     }
 
-    if (self.detailLabel != nil) {
-        CGRect detailLabelFrame = self.detailLabel.frame;
-        if (self.titleLabel == nil) {
-            detailLabelFrame.origin = CGPointMake(ViewInset, ViewInset);
-        } else {
-            detailLabelFrame.origin = CGPointMake(ViewInset, (self.titleLabel.frame.origin.y + self.titleLabel.frame.size.height + ViewInset));
+
+    if (self.detail != nil) {
+        CGPoint frameOrigin = CGPointMake(ViewInset, ViewInset);
+        CGFloat maxWidth = MaxWidth - (ViewInset * 2.0f);
+
+        if (self.titleLabel != nil) {
+            frameOrigin = CGPointMake(ViewInset, (self.titleLabel.frame.origin.y + self.titleLabel.frame.size.height + ViewInset));
+
+        } else if (self.activityIndicatorView != nil)  {
+            frameOrigin = CGPointMake(((ViewInset * 2.0f) + self.activityIndicatorView.frame.size.width), ViewInset);
+            maxWidth = MaxWidth - frameOrigin.x - ViewInset - ViewInset;
+
         }
 
-        self.detailLabel.frame = detailLabelFrame;
+
+
+        self.detailLabel = [self createDetailLabelWithMaxWidth:maxWidth labelOrigin:frameOrigin];
         self.detailLabel.center = CGPointMake(self.hudView.center.x, self.detailLabel.center.y);
 
-        heightOfAllItems = detailLabelFrame.origin.y + detailLabelFrame.size.height;
+        heightOfAllItems = self.detailLabel.frame.origin.y + self.detailLabel.frame.size.height;
+
+        if (self.titleLabel == nil && self.activityIndicatorView != nil) {
+            self.activityIndicatorView.center = CGPointMake(self.activityIndicatorView.center.x, self.detailLabel.center.y);
+        }
 
         [self.hudView addSubview:self.detailLabel];
     }
@@ -374,25 +382,21 @@ static const CGFloat AnimationDuration = 0.25f;
 
 
 
-- (UILabel *)createTitleLabelAsNeeded {
-    if (self.title == nil) {
-        return nil;
-    }
+- (UILabel *)createTitleLabelWithMaxWidth:(CGFloat)maxLabelWidth labelOrigin:(CGPoint)labelOrigin {
 
-    CGFloat maxLabelWidth = MaxWidth - (ViewInset * 2.0f);
     CGFloat fontSize = (([UIFont systemFontSize] + 3.0f) < 17.0f) ? 17.0f : ([UIFont systemFontSize] + 3.0f);
     UIFont *labelFont = [UIFont boldSystemFontOfSize:fontSize];
 
     CGFloat titleLabelHeight = labelFont.lineHeight;
 
     CGRect labelRect = [self.title boundingRectWithSize:CGSizeMake(maxLabelWidth, ceilf(titleLabelHeight))
-                                                 options:(NSStringDrawingTruncatesLastVisibleLine)
+                                                 options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingTruncatesLastVisibleLine
                                               attributes:@{
                                                       NSFontAttributeName : labelFont,
                                               }
                                                  context:nil];
 
-    UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(ViewInset, ViewInset, ceilf(labelRect.size.width), ceilf(labelRect.size.height))];
+    UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(labelOrigin.x, labelOrigin.y, ceilf(labelRect.size.width), ceilf(labelRect.size.height))];
     titleLabel.font = labelFont;
     titleLabel.text = self.title;
     titleLabel.textAlignment = NSTextAlignmentCenter;
@@ -404,12 +408,8 @@ static const CGFloat AnimationDuration = 0.25f;
 
 
 
-- (UILabel *)createDetailLabelAsNeeded {
-    if (self.detail == nil) {
-        return nil;
-    }
+- (UILabel *)createDetailLabelWithMaxWidth:(CGFloat)maxLabelWidth labelOrigin:(CGPoint)labelOrigin {
 
-    CGFloat maxLabelWidth = MaxWidth - (ViewInset * 2.0f);
     UIFont *labelFont = [UIFont systemFontOfSize:[UIFont systemFontSize]];
 
     CGFloat detailLabelMaxHeight = labelFont.lineHeight;
@@ -421,7 +421,7 @@ static const CGFloat AnimationDuration = 0.25f;
                                               }
                                                  context:nil];
 
-    UILabel *detailLabel = [[UILabel alloc] initWithFrame:CGRectMake(labelRect.origin.x, labelRect.origin.y, ceilf(labelRect.size.width), ceilf(labelRect.size.height))];
+    UILabel *detailLabel = [[UILabel alloc] initWithFrame:CGRectMake(labelOrigin.x, labelOrigin.y, ceilf(labelRect.size.width), ceilf(labelRect.size.height))];
     detailLabel.font = labelFont;
     detailLabel.text = self.detail;
     detailLabel.numberOfLines = maxNumberOfLines;
