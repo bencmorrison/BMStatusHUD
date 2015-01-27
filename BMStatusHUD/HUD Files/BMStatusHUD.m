@@ -166,7 +166,6 @@ static const CGFloat AnimationDuration = 0.25f;
 
     self.hudView.center = startCenter;
 
-
     dispatch_async(dispatch_get_main_queue(), ^{
         self.statusWindow = [[UIWindow alloc] initWithFrame:[UIApplication sharedApplication].keyWindow.bounds];
         self.statusWindow.windowLevel = windowLevel;
@@ -250,6 +249,7 @@ static const CGFloat AnimationDuration = 0.25f;
                                      self.hudView.center = endCenter;
                                      self.backgroundView.alpha = 0.0f;
                                  }
+
                                  [self.backgroundView removeFromSuperview];
 
                                  [self.statusWindow resignKeyWindow];
@@ -365,16 +365,20 @@ static const CGFloat AnimationDuration = 0.25f;
 
 
 - (UIActivityIndicatorView *)createActivityIndicatorViewIfNeeded {
-    if (self.activityIndicatorType != BMStatusHUDActivityIndicatorTypeDark && self.activityIndicatorType != BMStatusHUDActivityIndicatorTypeLight) {
-        return nil;
-    }
 
     UIActivityIndicatorViewStyle activityIndicatorViewStyle;
 
-    if (self.activityIndicatorType == BMStatusHUDActivityIndicatorTypeDark) {
-        activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
-    } else {
-        activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhite;
+    switch (self.activityIndicatorType) {
+        case BMStatusHUDActivityIndicatorTypeDark:
+            activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
+            break;
+
+        case BMStatusHUDActivityIndicatorTypeLight:
+            activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhite;
+            break;
+
+        default:
+            return nil;
     }
 
     return [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:activityIndicatorViewStyle];
@@ -435,6 +439,7 @@ static const CGFloat AnimationDuration = 0.25f;
 
 #pragma mark - Custom Setters
 - (void)setTitle:(NSString *)title {
+
     if (title != nil && title.length == 0) {
         title = nil;
 
@@ -442,23 +447,28 @@ static const CGFloat AnimationDuration = 0.25f;
 
     _title = title;
 
-    if (self.titleLabel != nil) {
-        self.titleLabel.text = title;
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.titleLabel != nil) {
+            self.titleLabel.text = title;
+        }
+    });
 }
 
 
 
 - (void)setDetail:(NSString *)detail {
+
     if (detail != nil && detail.length == 0) {
         detail = nil;
     }
 
     _detail = detail;
 
-    if (self.detailLabel != nil) {
-        self.detailLabel.text = detail;
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.detailLabel != nil) {
+            self.detailLabel.text = detail;
+        }
+    });
 }
 
 
@@ -466,14 +476,16 @@ static const CGFloat AnimationDuration = 0.25f;
 - (void)setActivityIndicatorType:(enum BMStatusHUDActivityIndicatorType)type {
     _activityIndicatorType = type;
 
-    if (self.activityIndicatorView != nil) {
-        if (type == BMStatusHUDActivityIndicatorTypeDark) {
-            self.activityIndicatorView.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.activityIndicatorView != nil) {
+            if (type == BMStatusHUDActivityIndicatorTypeDark) {
+                self.activityIndicatorView.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
 
-        } else {
-            self.activityIndicatorView.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhite;
+            } else {
+                self.activityIndicatorView.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhite;
+            }
         }
-    }
+    });
 }
 
 
@@ -481,10 +493,11 @@ static const CGFloat AnimationDuration = 0.25f;
 - (void)setBlockerColor:(UIColor *)blockerColor {
     _blockerColor = blockerColor;
 
-    if (self.backgroundView != nil) {
-        self.backgroundView.backgroundColor = blockerColor;
-    }
-
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.backgroundView != nil) {
+            self.backgroundView.backgroundColor = blockerColor;
+        }
+    });
 }
 
 
@@ -492,9 +505,11 @@ static const CGFloat AnimationDuration = 0.25f;
 - (void)setHudBackgroundColor:(UIColor *)hudBackgroundColor {
     _hudBackgroundColor = hudBackgroundColor;
 
-    if (self.hudView != nil) {
-        self.hudView.backgroundColor = hudBackgroundColor;
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.hudView != nil) {
+            self.hudView.backgroundColor = hudBackgroundColor;
+        }
+    });
 }
 
 
@@ -502,13 +517,15 @@ static const CGFloat AnimationDuration = 0.25f;
 - (void)setTextColor:(UIColor *)textColor {
     _textColor = textColor;
 
-    if (self.title != nil) {
-        self.titleLabel.textColor = textColor;
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.title != nil) {
+            self.titleLabel.textColor = textColor;
+        }
 
-    if (self.detailLabel != nil) {
-        self.detailLabel.textColor = textColor;
-    }
+        if (self.detailLabel != nil) {
+            self.detailLabel.textColor = textColor;
+        }
+    });
 }
 
 @end
